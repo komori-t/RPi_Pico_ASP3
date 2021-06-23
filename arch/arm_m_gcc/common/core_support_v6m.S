@@ -230,6 +230,13 @@ ALABEL(pendsv_handler_1)
 	mov    r11, r7
 	ldmia  r2!, {r4-r7}
 	msr    psp, r2
+	/*
+	 * 割り込み優先度マスク全解除状態へ
+	 */
+	ldr    r0, =iipm_enable_masks
+	ldr    r0, [r0, #(IIPM_ENAALL << 2)]
+	ldr    r2, =NVIC_SETENA0
+	str    r0, [r2]
 	bx     r1
 ALABEL(return_to_idle)
 	mrs    r0, psp
@@ -262,6 +269,7 @@ ALABEL(return_to_thread)
 	ldr    r1, =lock_flag
 	movs   r2, #1
 	str    r2, [r1]
+	ldr    r0, =#EXC_RETURN
 	bx     r0
 
 /*

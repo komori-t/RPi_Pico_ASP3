@@ -234,8 +234,6 @@ Inline void enable_int(INTNO intno)
         /* 指定された割り込みがカーネル管理外である場合のため，NVICの設定を更新する． */
         sil_wrw_mem((uint32_t *)NVIC_SETENA0, iipm_enable_masks[IIPM_LOCK]);
     }
-
-    return true;
 }
 
 /*

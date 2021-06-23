@@ -116,7 +116,7 @@ $kernelCfgC.append(<<EOS)
 const uint32_t _vStackTop = (uint32_t)TOPPERS_ISTKPT(_kernel_istack, ROUND_STK_T(DEFAULT_ISTKSZ));
 __attribute__ ((section(".vector")))
 const FP _kernel_vector_table[] = {
-    (FP)(TOPPERS_ISTKPT(_kernel_istack_prc1, ROUND_STK_T(DEFAULT_ISTKSZ))),   /* 0 The initial stack pointer */
+    (FP)(TOPPERS_ISTKPT(_kernel_istack, ROUND_STK_T(DEFAULT_ISTKSZ))),   /* 0 The initial stack pointer */
     (FP)_kernel_start,                 /* 1 The reset handler */
 EOS
 Array(2..14).each { |excno|
