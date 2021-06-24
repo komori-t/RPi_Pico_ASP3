@@ -59,6 +59,7 @@ $offsetH.append(<<EOS)
 #define TCB_pc				#{$offsetof_TCB_pc}
 #define TCB_sp				#{$offsetof_TCB_sp}
 #define TINIB_stk_bottom	#{$offsetof_TINIB_TSKINICTXB_stk_bottom}
+#define TINIB_stk_top       #{$offsetof_TINIB_TSKINICTXB_stk_top}
 #define TINIB_exinf			#{$offsetof_TINIB_exinf}
 #define TINIB_task			#{$offsetof_TINIB_task}
 EOS
