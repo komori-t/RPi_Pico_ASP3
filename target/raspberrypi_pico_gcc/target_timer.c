@@ -54,7 +54,6 @@ void target_hrt_initialize(intptr_t exinf)
 {
     /* 12MHz XTAL / 12 -> 1MHz */
     sil_wrw_mem(RP2040_WATCHDOG_TICK, RP2040_WATCHDOG_ENABLE | 12);
-    sil_wrw_mem(RP2040_CLOCKS_CLK_REF_DIV, 1 << 8);
     /* Reset timer */
     sil_orw(RP2040_RESETS_RESET, RP2040_RESETS_RESET_TIMER);
     sil_clrw(RP2040_RESETS_RESET, RP2040_RESETS_RESET_TIMER);

@@ -73,9 +73,12 @@ void hardware_init_hook(void)
 
     /* XTAL -> clk_ref (glitchless) */
     sil_wrw_mem(RP2040_CLOCKS_CLK_REF_CTRL, RP2040_CLOCKS_CLK_REF_CTRL_SRC_XOSC);
+    sil_wrw_mem(RP2040_CLOCKS_CLK_REF_DIV, 1 << 8);
+    while (sil_rew_mem(RP2040_CLOCKS_CLK_REF_SELECTED) != (1 << RP2040_CLOCKS_CLK_REF_CTRL_SRC_XOSC)) ;
 
     /* clk_ref -> clk_sys (glitchless) */
     sil_wrw_mem(RP2040_CLOCKS_CLK_SYS_CTRL, RP2040_CLOCKS_CLK_SYS_CTRL_SRC_REF);
+    while (sil_rew_mem(RP2040_CLOCKS_CLK_SYS_SELECTED) != (1 << RP2040_CLOCKS_CLK_SYS_CTRL_SRC_REF)) ;
 
     /* Reset PLL */
     sil_orw(RP2040_RESETS_RESET, RP2040_RESETS_RESET_PLL_SYS);
