@@ -68,53 +68,55 @@ ALABEL(core_exc_entry)
 	 *  この内容に加えて，iipm の値と EXC_RETURN の情報を加えて保存する．
 	 *  iipm は exc_sense_context() および exc_get_iipm() で利用する．
 	 *
-	 *   ------------
-	 *  |    iipm    |
-	 *   ------------
-	 *  | EXC_RETURN |
-	 *   ------------
-	 *  |     R0     |
-	 *   ------------
-	 *  |     R1     |
-	 *   ------------
-	 *  |     R2     |
-	 *   ------------
-	 *  |     R3     |
-	 *   ------------
-	 *  |     R12    |
-	 *   ------------
-	 *  |     LR     |
-	 *   ------------
-	 *  |     PC     |
-	 *   ------------
-	 *  |    xPSR    |
-	 *   ------------
+	 *   ---------------------
+	 *  | lock |  pm |  iipm  |
+	 *   ---------------------
+	 *  |      EXC_RETURN     |
+	 *   ---------------------
+	 *  |          R0         |
+	 *   ---------------------
+	 *  |          R1         |
+	 *   ---------------------
+	 *  |          R2         |
+	 *   ---------------------
+	 *  |          R3         |
+	 *   ---------------------
+	 *  |         R12         |
+	 *   ---------------------
+	 *  |          LR         |
+	 *   ---------------------
+	 *  |          PC         |
+	 *   ---------------------
+	 *  |         xPSR        |
+	 *   ---------------------
 	 */
-	ldr   r1, =current_iipm_enable_mask
-	ldr   r1, [r1]
+	ldr   r0, =current_iipm_enable_mask
+	ldr   r0, [r0]
 	ldr   r2, =iipm_enable_masks
-	subs  r1, r1, r2
-	lsrs  r1, #2
-	mov   r2, lr
-	movs  r3, #EXC_RETURN_PSP
-	tst   r2, r3
+	subs  r2, r0, r2
+	lsrs  r2, #2
+	mrs   r1, primask
+	lsls  r1, #8
+	orrs  r2, r1
+	ldr   r1, =lock_flag
+	ldr   r3, [r1]
+	lsls  r3, #9
+	orrs  r2, r3
+	mov   r3, lr
+	push  {r0-r3}
+	movs  r0, #EXC_RETURN_PSP
+	tst   r0, r3
 	beq   core_exc_entry_1
 	/* タスクコンテキストで発生した CPU 例外の場合 */
 	mrs   r0, psp
 	subs  r0, #(4 * 2)
-	str   r1, [r0]
-	str   r2, [r0, #(4)] /* 例外フレームの上に iipm と EXC_RETURN を積む */
-	push  {r1, r2} /* リターン処理のため MSP 上にも積む */
+	str   r2, [r0]
+	str   r3, [r0, #(4)] /* 例外フレームの上に iipm と EXC_RETURN を積む */
 	b     core_exc_entry_2
 ALABEL(core_exc_entry_1)
 	/* 非タスクコンテキストで発生した CPU 例外の場合 */
-	push  {r1, r2}
-	mov   r0, sp
+	add   r0, sp, #8
 ALABEL(core_exc_entry_2)
-	/* CPU ロック状態を保存する */
-	ldr   r2, =lock_flag
-	ldr   r3, [r2]
-	push  {r2, r3}
 #ifdef TOPPERS_SUPPORT_OVRHDR
 	push  {r0, r1}
 	bl    ovrtimer_stop
@@ -143,23 +145,38 @@ ALABEL(core_exc_entry_2)
 	bl    ovrtimer_start
 #endif /* TOPPERS_SUPPORT_OVRHDR */
 	/* CPU ロック状態と割り込み優先度を元に戻す */
-	pop   {r0-r3}
-	/*
-	 * r0 : &lock_flag
-	 * r1 : 例外発生時の lock_flag
-	 * r2 : 例外発生時の iipm
-	 * r3 : 実行再開番地
-	 */
-	str   r1, [r0]
 	ldr   r0, =NVIC_CLRENA0
 	ldr   r1, =#0xFFFFFFFF
 	str   r1, [r0]
-	ldr   r0, =NVIC_SETENA0
-	ldr   r1, =iipm_enable_masks
-	lsls  r2, #2
-	ldr   r2, [r1, r2]
-	str   r2, [r0]
-	bx    r3 /* リターン */
+	pop   {r0-r3}
+	/*
+	 * r0 : 例外発生時の current_iipm_enable_mask
+	 * r1 : &lock_flag
+	 * r2 : 例外発生時の lock_flag | primask | iipm
+	 * r3 : 実行再開番地
+	 */
+	lsrs  r2, r2, #9
+	str   r2, [r1]
+	ldr   r2, =NVIC_SETENA0
+	bne   core_exc_entry_3
+	/*
+	 * lock_flag = 0 => CPUロック解除状態へ
+	 * NVIC_SETENA0を元に戻す．
+	 */
+	ldr   r0, [r0]
+	str   r0, [r2]
+	bx    r3
+ALABEL(core_exc_entry_3)
+	/*
+	 * lock_flag = 1 => CPUロック状態へ
+	 * カーネル管理外のCPU例外であるためNVIC_SETENA0を
+	 * サービスコールから変更することはできないが，
+	 * 統合仕様書の記述に従い元に戻す．
+	 */
+	ldr   r0, =iipm_enable_masks
+	ldr   r0, [r0, #(IIPM_LOCK << 2)]
+	str   r0, [r2]
+	bx    r3
 
 /*
  * 遅延ディスパッチ
@@ -339,6 +356,15 @@ ALABEL(start_dispatch)
 	ldr   r1, =tinib_table
 	ldr   r0, [r1, #TINIB_stk_bottom]
 	mov   sp, r0
+
+	/* カーネル管理の割り込みを禁止 */
+	ldr   r0, =NVIC_CLRENA0
+	ldr   r1, =#0xFFFFFFFF
+	str   r1, [r0]
+	ldr   r0, =NVIC_SETENA0
+	ldr   r1, =iipm_enable_masks
+	ldr   r1, [r1, #(IIPM_LOCK << 2)]
+	str   r1, [r0]
 
 	/* dispatcher_0 の引数を設定 */
 	ldr   r1, =p_schedtsk
