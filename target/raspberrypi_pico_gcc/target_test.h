@@ -45,6 +45,7 @@
 #define TOPPERS_TARGET_TEST_H
 
 #define STACK_SIZE (1024)
+#define MEASURE_TWICE
 
 /*
  *  コア依存モジュール（ARM-M用）

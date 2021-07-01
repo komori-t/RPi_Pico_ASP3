@@ -53,7 +53,8 @@
 void target_hrt_initialize(intptr_t exinf)
 {
     /* 12MHz XTAL / 12 -> 1MHz */
-    sil_wrw_mem(RP2040_WATCHDOG_TICK, RP2040_WATCHDOG_ENABLE | 12);
+    sil_wrw_mem(RP2040_WATCHDOG_TICK, RP2040_WATCHDOG_ENABLE | 12); /* According to pico-sdk, not 12 - 1 */
+    while ((sil_rew_mem(RP2040_WATCHDOG_TICK) & RP2040_WATCHDOG_RUNNING) == 0) ;
     /* Reset timer */
     sil_orw(RP2040_RESETS_RESET, RP2040_RESETS_RESET_TIMER);
     sil_clrw(RP2040_RESETS_RESET, RP2040_RESETS_RESET_TIMER);
