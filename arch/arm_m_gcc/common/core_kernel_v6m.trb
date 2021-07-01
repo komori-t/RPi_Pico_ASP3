@@ -128,7 +128,7 @@ Array(2..14).each { |excno|
         $kernelCfgC.add("    (FP)(_kernel_pendsv_handler),      /* 14 PendSV handler */")
     else
         if exc = $cfgData[:DEF_EXC][excno]
-            if exc[:excatr] == $TA_DIRECT
+            if (exc[:excatr] & $TA_DIRECT) != 0
                 $kernelCfgC.add("    (FP)(#{exc[:exchdr]}), /* #{excno} */")
                 next
             end
@@ -138,8 +138,8 @@ Array(2..14).each { |excno|
 }
 $INTNO_VALID.each { |inhno|
     if inh = $cfgData[:DEF_INH][inhno]
-        if inh[:inhatr] == $TA_NONKERNEL
-            $kernelCfgC.add("    (FP)(#{v[:inthdr]}), /* #{inhno} */")
+        if (inh[:inhatr] & $TA_NONKERNEL) != 0
+            $kernelCfgC.add("    (FP)(#{inh[:inthdr]}), /* #{inhno} */")
             next
         end
     end
