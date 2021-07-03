@@ -49,7 +49,8 @@
 #
 #  有効な割込み番号，割込みハンドラ番号
 #
-$INTNO_VALID = Array(15..$TMAX_INTNO)
+$INTNO_SYSTICK = 15
+$INTNO_VALID = Array($INTNO_SYSTICK..$TMAX_INTNO)
 $INHNO_VALID = $INTNO_VALID
 
 #
@@ -139,8 +140,13 @@ Array(2..14).each { |excno|
 $INTNO_VALID.each { |inhno|
     if inh = $cfgData[:DEF_INH][inhno]
         if (inh[:inhatr] & $TA_NONKERNEL) != 0
+            if intno == $INTNO_SYSTICK and $cfgData[:CFG_INT][inhno][:intpri] != -(1 << $TBITW_IPRI)
+                error "SysTick interrupt is only supported when configured with highest interrupt priority"
+            end
             $kernelCfgC.add("    (FP)(#{inh[:inthdr]}), /* #{inhno} */")
             next
+        elsif inhno == $INTNO_SYSTICK
+            error "SysTick interrupt is only supported when configured as non-kernel"
         end
     end
     $kernelCfgC.add("    (FP)(_kernel_core_int_entry), /* #{inhno} */")
