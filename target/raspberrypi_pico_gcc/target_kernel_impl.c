@@ -63,7 +63,6 @@ void hardware_init_hook(void)
     sil_orw(RP2040_RESETS_RESET,
             ~(RP2040_RESETS_RESET_PLL_SYS | RP2040_RESETS_RESET_PADS_QSPI | RP2040_RESETS_RESET_IO_QSPI));
     sil_clrw(RP2040_RESETS_RESET, ~(RP2040_RESETS_RESET_PLL_SYS | RP2040_RESETS_RESET_PADS_QSPI | RP2040_RESETS_RESET_IO_QSPI));
-    // while ((~sil_rew_mem(RP2040_RESETS_RESET_DONE)) & (0x1FFFFFF & ~(0x1C38001))) ;
 
     /*
      * +------------+    +-------+  1596MHz  +-----+  266MHz  +-----+

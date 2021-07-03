@@ -60,6 +60,7 @@ void target_hrt_initialize(intptr_t exinf)
     sil_clrw(RP2040_RESETS_RESET, RP2040_RESETS_RESET_TIMER);
     while ((sil_rew_mem(RP2040_RESETS_RESET_DONE) & RP2040_RESETS_RESET_TIMER) == 0) ;
     sil_wrw_mem(RP2040_TIMER_INTE, RP2040_TIMER_INT_ALARM_0); /* Enable interrupt */
+    while (target_hrt_get_current() < 1) ; /* Timer counter may not start immediately */
 }
 
 /*
