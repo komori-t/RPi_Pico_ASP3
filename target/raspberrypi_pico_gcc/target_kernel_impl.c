@@ -54,11 +54,15 @@
  */
 extern void Error_Handler(void);
 
+extern volatile int boot2_image;
+
 /*
  * 起動時のハードウェア初期化処理
  */
 void hardware_init_hook(void)
 {
+    if (boot2_image) ; /* Enforce boot2_image to be linked */
+
     /* Reset everything but the fundamental parts */
     sil_orw(RP2040_RESETS_RESET,
             ~(RP2040_RESETS_RESET_PLL_SYS | RP2040_RESETS_RESET_PADS_QSPI | RP2040_RESETS_RESET_IO_QSPI));
