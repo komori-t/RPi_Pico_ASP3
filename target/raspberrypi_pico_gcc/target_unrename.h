@@ -6,22 +6,11 @@
 
 
 /*
- * target_config.c
+ *  target_config.c
  */
 #undef target_initialize
 #undef target_exit
 
-#ifdef TOPPERS_LABEL_ASM
-
-
-/*
- * target_config.c
- */
-#undef _target_initialize
-#undef _target_exit
-
-#endif /* TOPPERS_LABEL_ASM */
-
-#include "chip_unrename.h"
+#include "arm_m_gcc/rp2040/chip_unrename.h"
 
 #endif /* TOPPERS_TARGET_RENAME_H */

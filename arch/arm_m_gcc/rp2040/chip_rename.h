@@ -4,11 +4,6 @@
 #define TOPPERS_CHIP_RENAME_H
 
 
-#ifdef TOPPERS_LABEL_ASM
-
-
-#endif /* TOPPERS_LABEL_ASM */
-
-#include "core_rename.h"
+#include "arm_m_gcc/common/core_rename.h"
 
 #endif /* TOPPERS_CHIP_RENAME_H */

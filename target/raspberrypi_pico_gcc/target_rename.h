@@ -5,22 +5,11 @@
 
 
 /*
- * target_config.c
+ *  target_config.c
  */
 #define target_initialize			_kernel_target_initialize
 #define target_exit					_kernel_target_exit
 
-#ifdef TOPPERS_LABEL_ASM
-
-
-/*
- * target_config.c
- */
-#define _target_initialize			__kernel_target_initialize
-#define _target_exit				__kernel_target_exit
-
-#endif /* TOPPERS_LABEL_ASM */
-
-#include "chip_rename.h"
+#include "arm_m_gcc/rp2040/chip_rename.h"
 
 #endif /* TOPPERS_TARGET_RENAME_H */

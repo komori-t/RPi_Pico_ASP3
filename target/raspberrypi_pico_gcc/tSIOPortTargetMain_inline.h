@@ -37,7 +37,7 @@
  *  アの利用により直接的または間接的に生じたいかなる損害に関しても，そ
  *  の責任を負わない．
  * 
- *  $Id: tSIOPortTargetMain_inline.h 1353 2020-01-03 07:54:31Z ertl-komori $
+ *  $Id: tSIOPortTargetMain_inline.h 1501 2021-07-28 12:48:03Z ertl-komori $
  */
 
 /*

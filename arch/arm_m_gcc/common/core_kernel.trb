@@ -38,7 +38,7 @@
 #   アの利用により直接的または間接的に生じたいかなる損害に関しても，そ
 #   の責任を負わない．
 #
-#   @(#) $Id: core_kernel.trb 1477 2020-09-08 15:46:23Z ertl-komori $
+#   @(#) $Id: core_kernel.trb 1500 2021-07-28 12:35:13Z ertl-komori $
 #
 # =====================================================================
 
@@ -133,7 +133,7 @@ Array(2..14).each { |excno|
         $kernelCfgC.add("    (FP)(_kernel_pendsv_handler),      /* 14 PendSV handler */")
     else
         if exc = $cfgData[:DEF_EXC][excno]
-            if exc[:excatr] == $TA_DIRECT
+            if (exc[:excatr] & $TA_DIRECT) != 0
                 $kernelCfgC.add("    (FP)(#{exc[:exchdr]}), /* #{excno} */")
                 next
             end
@@ -143,7 +143,7 @@ Array(2..14).each { |excno|
 }
 $INTNO_VALID.each { |inhno|
     if inh = $cfgData[:DEF_INH][inhno]
-        if inh[:inhatr] == $TA_NONKERNEL
+        if (inh[:inhatr] & $TA_NONKERNEL) != 0
             $kernelCfgC.add("    (FP)(#{inh[:inthdr]}), /* #{inhno} */")
             next
         end
