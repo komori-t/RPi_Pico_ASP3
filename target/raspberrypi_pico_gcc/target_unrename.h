@@ -11,6 +11,6 @@
 #undef target_initialize
 #undef target_exit
 
-#include "arm_m_gcc/rp2040/chip_unrename.h"
+#include "chip_unrename.h"
 
 #endif /* TOPPERS_TARGET_RENAME_H */

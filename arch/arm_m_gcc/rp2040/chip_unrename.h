@@ -5,6 +5,6 @@
 #undef TOPPERS_CHIP_RENAME_H
 
 
-#include "arm_m_gcc/common/core_unrename.h"
+#include "core_unrename.h"
 
 #endif /* TOPPERS_CHIP_RENAME_H */
