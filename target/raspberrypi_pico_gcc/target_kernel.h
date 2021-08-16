@@ -49,8 +49,6 @@
 #ifndef TOPPERS_TARGET_KERNEL_H
 #define TOPPERS_TARGET_KERNEL_H
 
-#ifdef USE_TIM_AS_HRT
-
 /*
  * 高分解能タイマのタイマ周期
  *
@@ -62,8 +60,6 @@
  * 高分解能タイマのカウント値の進み幅
  */
 #define TSTEP_HRTCNT 1U
-
-#endif /* USE_TIM_AS_HRT */
 
 /*
  * チップで共通な定義

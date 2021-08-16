@@ -42,14 +42,6 @@
 /*
  * タイマドライバ（RaspberryPi Pico用）
  */
-#ifdef USE_SYSTICK_AS_TIMETICK
-
-/*
- * プロセッサ依存部で定義する
- */
-#include "core_timer.h"
-
-#else /* USE_SYSTICK_AS_TIMETICK */
 
 #include "kernel/kernel_impl.h"
 #include <sil.h>
@@ -128,7 +120,5 @@ Inline void target_hrt_set_event(HRTCNT hrtcnt)
 extern void	target_hrt_handler(void);
 
 #endif /* TOPPERS_MACRO_ONLY */
-
-#endif /* USE_SYSTICK_AS_TIMETICK */
 
 #endif /* TOPPERS_TARGET_TIMER_H */
