@@ -80,7 +80,7 @@ extern void __aeabi_mem_init(void);
  * 通常通りもう一度 sio_opn_por() が呼び出されるが，
  * このときにハードウェアを再設定してはならない．しかし，
  * シリアルドライバ側が必要とする exinf は保存する必要
- *　がある．
+ * がある．
  */
 SIOPCB *sio_opn_por(ID siopid, intptr_t exinf)
 {

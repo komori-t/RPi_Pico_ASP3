@@ -95,5 +95,5 @@ endif
 #
 # フラッシュへの書き込み
 #
-run: $(OBJNAME)
-	openocd -f interface/picoprobe.cfg -f target/rp2040.cfg -c "program $(OBJNAME) verify reset exit"
+run: $(OBJFILE)
+	openocd -f interface/picoprobe.cfg -f target/rp2040.cfg -c "program $(OBJFILE) verify reset exit"

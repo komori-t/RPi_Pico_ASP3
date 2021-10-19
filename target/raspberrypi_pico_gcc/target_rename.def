@@ -1,4 +1,4 @@
-INCLUDE	"arm_m_gcc/rp2040/chip"
+INCLUDE	"chip"
 
 #target_config.c
 target_initialize
